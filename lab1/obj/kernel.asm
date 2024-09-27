@@ -275,8 +275,8 @@ void intr_enable(void) { set_csr(sstatus, SSTATUS_SIE); }
     80200182:	8082                	ret
 
 0000000080200184 <idt_init>:
-
-void idt_init(void) {
+void idt_init(void)
+{
     extern void __alltraps(void);
     /* Set sscratch register to 0, indicating to exception vector that we are
      * presently executing in the kernel */
@@ -291,21 +291,21 @@ void idt_init(void) {
     80200194:	8082                	ret
 
 0000000080200196 <print_regs>:
-    cprintf("  badvaddr 0x%08x\n", tf->badvaddr);
     cprintf("  cause    0x%08x\n", tf->cause);
 }
 
-void print_regs(struct pushregs *gpr) {
+void print_regs(struct pushregs *gpr)
+{
     cprintf("  zero     0x%08x\n", gpr->zero);
     80200196:	610c                	ld	a1,0(a0)
-void print_regs(struct pushregs *gpr) {
+{
     80200198:	1141                	addi	sp,sp,-16
     8020019a:	e022                	sd	s0,0(sp)
     8020019c:	842a                	mv	s0,a0
     cprintf("  zero     0x%08x\n", gpr->zero);
     8020019e:	00001517          	auipc	a0,0x1
     802001a2:	b3250513          	addi	a0,a0,-1230 # 80200cd0 <etext+0x28e>
-void print_regs(struct pushregs *gpr) {
+{
     802001a6:	e406                	sd	ra,8(sp)
     cprintf("  zero     0x%08x\n", gpr->zero);
     802001a8:	ec9ff0ef          	jal	ra,80200070 <cprintf>
@@ -473,17 +473,17 @@ void print_regs(struct pushregs *gpr) {
     80200360:	bb01                	j	80200070 <cprintf>
 
 0000000080200362 <print_trapframe>:
-void print_trapframe(struct trapframe *tf) {
+{
     80200362:	1141                	addi	sp,sp,-16
     80200364:	e022                	sd	s0,0(sp)
     cprintf("trapframe at %p\n", tf);
     80200366:	85aa                	mv	a1,a0
-void print_trapframe(struct trapframe *tf) {
+{
     80200368:	842a                	mv	s0,a0
     cprintf("trapframe at %p\n", tf);
     8020036a:	00001517          	auipc	a0,0x1
     8020036e:	c6650513          	addi	a0,a0,-922 # 80200fd0 <etext+0x58e>
-void print_trapframe(struct trapframe *tf) {
+{
     80200372:	e406                	sd	ra,8(sp)
     cprintf("trapframe at %p\n", tf);
     80200374:	cfdff0ef          	jal	ra,80200070 <cprintf>
@@ -520,17 +520,17 @@ void print_trapframe(struct trapframe *tf) {
 
 00000000802003c2 <interrupt_handler>:
 
-
-void interrupt_handler(struct trapframe *tf) {
+void interrupt_handler(struct trapframe *tf)
+{
     intptr_t cause = (tf->cause << 1) >> 1;
     802003c2:	11853783          	ld	a5,280(a0)
-    switch (cause) {
+    switch (cause)
     802003c6:	472d                	li	a4,11
     intptr_t cause = (tf->cause << 1) >> 1;
     802003c8:	0786                	slli	a5,a5,0x1
     802003ca:	8385                	srli	a5,a5,0x1
-    switch (cause) {
-    802003cc:	06f76a63          	bltu	a4,a5,80200440 <interrupt_handler+0x7e>
+    switch (cause)
+    802003cc:	06f76b63          	bltu	a4,a5,80200442 <interrupt_handler+0x80>
     802003d0:	00000717          	auipc	a4,0x0
     802003d4:	78c70713          	addi	a4,a4,1932 # 80200b5c <etext+0x11a>
     802003d8:	078a                	slli	a5,a5,0x2
@@ -538,181 +538,182 @@ void interrupt_handler(struct trapframe *tf) {
     802003dc:	439c                	lw	a5,0(a5)
     802003de:	97ba                	add	a5,a5,a4
     802003e0:	8782                	jr	a5
-            break;
-        case IRQ_H_SOFT:
-            cprintf("Hypervisor software interrupt\n");
-            break;
-        case IRQ_M_SOFT:
-            cprintf("Machine software interrupt\n");
+        break;
+    case IRQ_H_SOFT:
+        cprintf("Hypervisor software interrupt\n");
+        break;
+    case IRQ_M_SOFT:
+        cprintf("Machine software interrupt\n");
     802003e2:	00001517          	auipc	a0,0x1
     802003e6:	89e50513          	addi	a0,a0,-1890 # 80200c80 <etext+0x23e>
     802003ea:	b159                	j	80200070 <cprintf>
-            cprintf("Hypervisor software interrupt\n");
+        cprintf("Hypervisor software interrupt\n");
     802003ec:	00001517          	auipc	a0,0x1
     802003f0:	87450513          	addi	a0,a0,-1932 # 80200c60 <etext+0x21e>
     802003f4:	b9b5                	j	80200070 <cprintf>
-            cprintf("User software interrupt\n");
+        cprintf("User software interrupt\n");
     802003f6:	00001517          	auipc	a0,0x1
     802003fa:	82a50513          	addi	a0,a0,-2006 # 80200c20 <etext+0x1de>
     802003fe:	b98d                	j	80200070 <cprintf>
-            cprintf("Supervisor software interrupt\n");
+        cprintf("Supervisor software interrupt\n");
     80200400:	00001517          	auipc	a0,0x1
     80200404:	84050513          	addi	a0,a0,-1984 # 80200c40 <etext+0x1fe>
     80200408:	b1a5                	j	80200070 <cprintf>
-            break;
-        case IRQ_U_EXT:
-            cprintf("User software interrupt\n");
-            break;
-        case IRQ_S_EXT:
-            cprintf("Supervisor external interrupt\n");
+        break;
+    case IRQ_U_EXT:
+        cprintf("User software interrupt\n");
+        break;
+    case IRQ_S_EXT:
+        cprintf("Supervisor external interrupt\n");
     8020040a:	00001517          	auipc	a0,0x1
     8020040e:	8a650513          	addi	a0,a0,-1882 # 80200cb0 <etext+0x26e>
     80200412:	b9b9                	j	80200070 <cprintf>
-void interrupt_handler(struct trapframe *tf) {
+{
     80200414:	1141                	addi	sp,sp,-16
     80200416:	e406                	sd	ra,8(sp)
-            clock_set_next_event();
+        clock_set_next_event();
     80200418:	d4dff0ef          	jal	ra,80200164 <clock_set_next_event>
-            tick++;  // 增加时钟中断计数
+        tick++; // 增加时钟中断计数
     8020041c:	00004717          	auipc	a4,0x4
     80200420:	bfc70713          	addi	a4,a4,-1028 # 80204018 <tick>
     80200424:	631c                	ld	a5,0(a4)
-            if (tick >= 100) {
-    80200426:	06300693          	li	a3,99
-            tick++;  // 增加时钟中断计数
-    8020042a:	0785                	addi	a5,a5,1
-    8020042c:	00004617          	auipc	a2,0x4
-    80200430:	bef63623          	sd	a5,-1044(a2) # 80204018 <tick>
-            if (tick >= 100) {
-    80200434:	631c                	ld	a5,0(a4)
-    80200436:	00f6e663          	bltu	a3,a5,80200442 <interrupt_handler+0x80>
-            break;
-        default:
-            print_trapframe(tf);
-            break;
+    80200426:	0785                	addi	a5,a5,1
+    80200428:	00004697          	auipc	a3,0x4
+    8020042c:	bef6b823          	sd	a5,-1040(a3) # 80204018 <tick>
+        if (tick % 100 == 0)
+    80200430:	631c                	ld	a5,0(a4)
+    80200432:	06400713          	li	a4,100
+    80200436:	02e7f7b3          	remu	a5,a5,a4
+    8020043a:	c789                	beqz	a5,80200444 <interrupt_handler+0x82>
+        break;
+    default:
+        print_trapframe(tf);
+        break;
     }
 }
-    8020043a:	60a2                	ld	ra,8(sp)
-    8020043c:	0141                	addi	sp,sp,16
-    8020043e:	8082                	ret
-            print_trapframe(tf);
-    80200440:	b70d                	j	80200362 <print_trapframe>
+    8020043c:	60a2                	ld	ra,8(sp)
+    8020043e:	0141                	addi	sp,sp,16
+    80200440:	8082                	ret
+        print_trapframe(tf);
+    80200442:	b705                	j	80200362 <print_trapframe>
     cprintf("%d ticks\n", TICK_NUM);
-    80200442:	06400593          	li	a1,100
-    80200446:	00001517          	auipc	a0,0x1
-    8020044a:	85a50513          	addi	a0,a0,-1958 # 80200ca0 <etext+0x25e>
-    8020044e:	c23ff0ef          	jal	ra,80200070 <cprintf>
-                num++;  // 增加打印行计数
-    80200452:	00004717          	auipc	a4,0x4
-    80200456:	bbe70713          	addi	a4,a4,-1090 # 80204010 <edata>
-    8020045a:	631c                	ld	a5,0(a4)
-                if (num >= 10) {
-    8020045c:	46a5                	li	a3,9
-                num++;  // 增加打印行计数
-    8020045e:	0785                	addi	a5,a5,1
-    80200460:	00004617          	auipc	a2,0x4
-    80200464:	baf63823          	sd	a5,-1104(a2) # 80204010 <edata>
-                if (num >= 10) {
-    80200468:	631c                	ld	a5,0(a4)
-    8020046a:	fcf6f8e3          	bgeu	a3,a5,8020043a <interrupt_handler+0x78>
+    80200444:	06400593          	li	a1,100
+    80200448:	00001517          	auipc	a0,0x1
+    8020044c:	85850513          	addi	a0,a0,-1960 # 80200ca0 <etext+0x25e>
+    80200450:	c21ff0ef          	jal	ra,80200070 <cprintf>
+            num++;         // 增加打印行计数
+    80200454:	00004717          	auipc	a4,0x4
+    80200458:	bbc70713          	addi	a4,a4,-1092 # 80204010 <edata>
+    8020045c:	631c                	ld	a5,0(a4)
+            if (num >= 10)
+    8020045e:	46a5                	li	a3,9
+            num++;         // 增加打印行计数
+    80200460:	0785                	addi	a5,a5,1
+    80200462:	00004617          	auipc	a2,0x4
+    80200466:	baf63723          	sd	a5,-1106(a2) # 80204010 <edata>
+            if (num >= 10)
+    8020046a:	631c                	ld	a5,0(a4)
+    8020046c:	fcf6f8e3          	bgeu	a3,a5,8020043c <interrupt_handler+0x7a>
 }
-    8020046e:	60a2                	ld	ra,8(sp)
-    80200470:	0141                	addi	sp,sp,16
-                    sbi_shutdown();  // 调用关机函数
-    80200472:	ab55                	j	80200a26 <sbi_shutdown>
+    80200470:	60a2                	ld	ra,8(sp)
+    80200472:	0141                	addi	sp,sp,16
+                sbi_shutdown(); // 调用关机函数
+    80200474:	ab4d                	j	80200a26 <sbi_shutdown>
 
-0000000080200474 <exception_handler>:
+0000000080200476 <exception_handler>:
 
-void exception_handler(struct trapframe *tf) {
-    switch (tf->cause) {
-    80200474:	11853783          	ld	a5,280(a0)
-    80200478:	472d                	li	a4,11
-    8020047a:	02f76763          	bltu	a4,a5,802004a8 <exception_handler+0x34>
-    8020047e:	4705                	li	a4,1
-    80200480:	00f71733          	sll	a4,a4,a5
-    80200484:	6785                	lui	a5,0x1
-    80200486:	17cd                	addi	a5,a5,-13
-    80200488:	8ff9                	and	a5,a5,a4
-    8020048a:	ef91                	bnez	a5,802004a6 <exception_handler+0x32>
-void exception_handler(struct trapframe *tf) {
-    8020048c:	1141                	addi	sp,sp,-16
-    8020048e:	e022                	sd	s0,0(sp)
-    80200490:	e406                	sd	ra,8(sp)
-    80200492:	00877793          	andi	a5,a4,8
-    80200496:	842a                	mv	s0,a0
-    80200498:	e3a1                	bnez	a5,802004d8 <exception_handler+0x64>
-    8020049a:	8b11                	andi	a4,a4,4
-    8020049c:	e719                	bnez	a4,802004aa <exception_handler+0x36>
-            break;
-        default:
-            print_trapframe(tf);
-            break;
+void exception_handler(struct trapframe *tf)
+{
+    switch (tf->cause)
+    80200476:	11853783          	ld	a5,280(a0)
+    8020047a:	472d                	li	a4,11
+    8020047c:	02f76763          	bltu	a4,a5,802004aa <exception_handler+0x34>
+    80200480:	4705                	li	a4,1
+    80200482:	00f71733          	sll	a4,a4,a5
+    80200486:	6785                	lui	a5,0x1
+    80200488:	17cd                	addi	a5,a5,-13
+    8020048a:	8ff9                	and	a5,a5,a4
+    8020048c:	ef91                	bnez	a5,802004a8 <exception_handler+0x32>
+{
+    8020048e:	1141                	addi	sp,sp,-16
+    80200490:	e022                	sd	s0,0(sp)
+    80200492:	e406                	sd	ra,8(sp)
+    80200494:	00877793          	andi	a5,a4,8
+    80200498:	842a                	mv	s0,a0
+    8020049a:	e3a1                	bnez	a5,802004da <exception_handler+0x64>
+    8020049c:	8b11                	andi	a4,a4,4
+    8020049e:	e719                	bnez	a4,802004ac <exception_handler+0x36>
+        break;
+    default:
+        print_trapframe(tf);
+        break;
     }
 }
-    8020049e:	6402                	ld	s0,0(sp)
-    802004a0:	60a2                	ld	ra,8(sp)
-    802004a2:	0141                	addi	sp,sp,16
-            print_trapframe(tf);
-    802004a4:	bd7d                	j	80200362 <print_trapframe>
-    802004a6:	8082                	ret
-    802004a8:	bd6d                	j	80200362 <print_trapframe>
-            cprintf("Exception type: Illegal instruction\n");
-    802004aa:	00000517          	auipc	a0,0x0
-    802004ae:	6e650513          	addi	a0,a0,1766 # 80200b90 <etext+0x14e>
-    802004b2:	bbfff0ef          	jal	ra,80200070 <cprintf>
-            cprintf("Illegal instruction caught at 0x%08x\n", tf->epc);
-    802004b6:	10843583          	ld	a1,264(s0)
-    802004ba:	00000517          	auipc	a0,0x0
-    802004be:	6fe50513          	addi	a0,a0,1790 # 80200bb8 <etext+0x176>
-    802004c2:	bafff0ef          	jal	ra,80200070 <cprintf>
-            tf->epc += 4;  // 假设每条指令占4个字节
-    802004c6:	10843783          	ld	a5,264(s0)
+    802004a0:	6402                	ld	s0,0(sp)
+    802004a2:	60a2                	ld	ra,8(sp)
+    802004a4:	0141                	addi	sp,sp,16
+        print_trapframe(tf);
+    802004a6:	bd75                	j	80200362 <print_trapframe>
+    802004a8:	8082                	ret
+    802004aa:	bd65                	j	80200362 <print_trapframe>
+        cprintf("Exception type: Illegal instruction\n");
+    802004ac:	00000517          	auipc	a0,0x0
+    802004b0:	6e450513          	addi	a0,a0,1764 # 80200b90 <etext+0x14e>
+    802004b4:	bbdff0ef          	jal	ra,80200070 <cprintf>
+        cprintf("Illegal instruction caught at 0x%08x\n", tf->epc);
+    802004b8:	10843583          	ld	a1,264(s0)
+    802004bc:	00000517          	auipc	a0,0x0
+    802004c0:	6fc50513          	addi	a0,a0,1788 # 80200bb8 <etext+0x176>
+    802004c4:	badff0ef          	jal	ra,80200070 <cprintf>
+        tf->epc += 4; // 假设每条指令占4个字节
+    802004c8:	10843783          	ld	a5,264(s0)
 }
-    802004ca:	60a2                	ld	ra,8(sp)
-            tf->epc += 4;  // 假设每条指令占4个字节
-    802004cc:	0791                	addi	a5,a5,4
-    802004ce:	10f43423          	sd	a5,264(s0)
+    802004cc:	60a2                	ld	ra,8(sp)
+        tf->epc += 4; // 假设每条指令占4个字节
+    802004ce:	0791                	addi	a5,a5,4
+    802004d0:	10f43423          	sd	a5,264(s0)
 }
-    802004d2:	6402                	ld	s0,0(sp)
-    802004d4:	0141                	addi	sp,sp,16
-    802004d6:	8082                	ret
-            cprintf("Exception type: breakpoint\n");
-    802004d8:	00000517          	auipc	a0,0x0
-    802004dc:	70850513          	addi	a0,a0,1800 # 80200be0 <etext+0x19e>
-    802004e0:	b91ff0ef          	jal	ra,80200070 <cprintf>
-            cprintf("ebreak caught at 0x%08x\n", tf->epc);
-    802004e4:	10843583          	ld	a1,264(s0)
-    802004e8:	00000517          	auipc	a0,0x0
-    802004ec:	71850513          	addi	a0,a0,1816 # 80200c00 <etext+0x1be>
-    802004f0:	b81ff0ef          	jal	ra,80200070 <cprintf>
-            tf->epc += 4;  // 假设每条指令占4个字节
-    802004f4:	10843783          	ld	a5,264(s0)
+    802004d4:	6402                	ld	s0,0(sp)
+    802004d6:	0141                	addi	sp,sp,16
+    802004d8:	8082                	ret
+        cprintf("Exception type: breakpoint\n");
+    802004da:	00000517          	auipc	a0,0x0
+    802004de:	70650513          	addi	a0,a0,1798 # 80200be0 <etext+0x19e>
+    802004e2:	b8fff0ef          	jal	ra,80200070 <cprintf>
+        cprintf("ebreak caught at 0x%08x\n", tf->epc);
+    802004e6:	10843583          	ld	a1,264(s0)
+    802004ea:	00000517          	auipc	a0,0x0
+    802004ee:	71650513          	addi	a0,a0,1814 # 80200c00 <etext+0x1be>
+    802004f2:	b7fff0ef          	jal	ra,80200070 <cprintf>
+        tf->epc += 4; // 假设每条指令占4个字节
+    802004f6:	10843783          	ld	a5,264(s0)
 }
-    802004f8:	60a2                	ld	ra,8(sp)
-            tf->epc += 4;  // 假设每条指令占4个字节
-    802004fa:	0791                	addi	a5,a5,4
-    802004fc:	10f43423          	sd	a5,264(s0)
+    802004fa:	60a2                	ld	ra,8(sp)
+        tf->epc += 4; // 假设每条指令占4个字节
+    802004fc:	0791                	addi	a5,a5,4
+    802004fe:	10f43423          	sd	a5,264(s0)
 }
-    80200500:	6402                	ld	s0,0(sp)
-    80200502:	0141                	addi	sp,sp,16
-    80200504:	8082                	ret
+    80200502:	6402                	ld	s0,0(sp)
+    80200504:	0141                	addi	sp,sp,16
+    80200506:	8082                	ret
 
-0000000080200506 <trap>:
+0000000080200508 <trap>:
 
 /* trap_dispatch - dispatch based on what type of trap occurred */
-static inline void trap_dispatch(struct trapframe *tf) {
-    if ((intptr_t)tf->cause < 0) {
-    80200506:	11853783          	ld	a5,280(a0)
-    8020050a:	0007c363          	bltz	a5,80200510 <trap+0xa>
-        // interrupts
+static inline void trap_dispatch(struct trapframe *tf)
+{
+    if ((intptr_t)tf->cause < 0)
+    80200508:	11853783          	ld	a5,280(a0)
+    8020050c:	0007c363          	bltz	a5,80200512 <trap+0xa>
         interrupt_handler(tf);
-    } else {
+    }
+    else
+    {
         // exceptions
         exception_handler(tf);
-    8020050e:	b79d                	j	80200474 <exception_handler>
+    80200510:	b79d                	j	80200476 <exception_handler>
         interrupt_handler(tf);
-    80200510:	bd4d                	j	802003c2 <interrupt_handler>
-	...
+    80200512:	bd45                	j	802003c2 <interrupt_handler>
 
 0000000080200514 <__alltraps>:
     .endm
@@ -768,7 +769,7 @@ __alltraps:
     move  a0, sp
     80200576:	850a                	mv	a0,sp
     jal trap
-    80200578:	f8fff0ef          	jal	ra,80200506 <trap>
+    80200578:	f91ff0ef          	jal	ra,80200508 <trap>
 
 000000008020057c <__trapret>:
     # sp should be the same as before "jal trap"
