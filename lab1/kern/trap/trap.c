@@ -192,7 +192,7 @@ void exception_handler(struct trapframe *tf)
         cprintf("Exception type: breakpoint\n");
         cprintf("ebreak caught at 0x%08x\n", tf->epc);
         // 更新 tf->epc 寄存器为下一条指令的地址
-        tf->epc += 4; // 假设每条指令占4个字节
+        tf->epc += 2; // 假设每条指令占4个字节
         break;
     case CAUSE_MISALIGNED_LOAD:
         break;
