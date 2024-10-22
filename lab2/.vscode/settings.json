@@ -1,10 +1,6 @@
 {
     "files.associations": {
-        "*.l": "lex",
-        "pmm.h": "c",
-        "atomic.h": "c",
-        "default_sched_stride.C": "cpp",
-        "defs.h": "c",
-        "assert.h": "c"
+        "sbi.h": "c",
+        "stdio.h": "c"
     }
 }
