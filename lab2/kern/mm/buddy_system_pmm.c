@@ -341,7 +341,7 @@ basic_check(void)
     nr_free = 16384;
 
     struct Page *p3 = alloc_pages(16384);
-    cprintf("after releasing p2(16384 Pages)\n");
+    cprintf("after allocating p3(16384 Pages)\n");
     show_buddy_array(0, MAX_BUDDY_ORDER);
 
     // 全部回收

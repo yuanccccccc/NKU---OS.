@@ -660,7 +660,7 @@ ffffffffc02003ea:	8522                	mv	a0,s0
 ffffffffc02003ec:	ca7ff0ef          	jal	ra,ffffffffc0200092 <vcprintf>
     cprintf("\n");
 ffffffffc02003f0:	00002517          	auipc	a0,0x2
-ffffffffc02003f4:	4c050513          	addi	a0,a0,1216 # ffffffffc02028b0 <buddy_system_pmm_manager+0xd8>
+ffffffffc02003f4:	29850513          	addi	a0,a0,664 # ffffffffc0202688 <commands+0x968>
 ffffffffc02003f8:	cbbff0ef          	jal	ra,ffffffffc02000b2 <cprintf>
     va_end(ap);
 
@@ -1668,7 +1668,7 @@ ffffffffc0200b3e:	82e98993          	addi	s3,s3,-2002 # ffffffffc0202368 <comman
 ffffffffc0200b42:	4cb9                	li	s9,14
                 cprintf("\n");
 ffffffffc0200b44:	00002d17          	auipc	s10,0x2
-ffffffffc0200b48:	d6cd0d13          	addi	s10,s10,-660 # ffffffffc02028b0 <buddy_system_pmm_manager+0xd8>
+ffffffffc0200b48:	b44d0d13          	addi	s10,s10,-1212 # ffffffffc0202688 <commands+0x968>
     for (int i = left; i <= right; i++)
 ffffffffc0200b4c:	4bbd                	li	s7,15
 ffffffffc0200b4e:	a029                	j	ffffffffc0200b58 <show_buddy_array.constprop.0+0x70>
@@ -1920,7 +1920,7 @@ ffffffffc0200d8e:	0ef42c23          	sw	a5,248(s0)
     struct Page *p3 = alloc_pages(16384);
 ffffffffc0200d92:	3e0000ef          	jal	ra,ffffffffc0201172 <alloc_pages>
 ffffffffc0200d96:	842a                	mv	s0,a0
-    cprintf("after releasing p2(16384 Pages)\n");
+    cprintf("after allocating p3(16384 Pages)\n");
 ffffffffc0200d98:	00002517          	auipc	a0,0x2
 ffffffffc0200d9c:	8d050513          	addi	a0,a0,-1840 # ffffffffc0202668 <commands+0x948>
 ffffffffc0200da0:	b12ff0ef          	jal	ra,ffffffffc02000b2 <cprintf>
