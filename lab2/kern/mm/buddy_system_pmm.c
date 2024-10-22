@@ -288,7 +288,8 @@ basic_check(void)
     cprintf("Total number of free blocks：%d\n", nr_free);
     struct Page *p0, *p1, *p2;
     p0 = p1 = p2 = NULL;
-
+    cprintf("initial condition\n");
+    show_buddy_array(0, MAX_BUDDY_ORDER);
     cprintf("p0 requests 5 Pages\n");
     p0 = alloc_pages(5);
     show_buddy_array(0, MAX_BUDDY_ORDER);
