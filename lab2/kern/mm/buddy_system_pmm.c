@@ -81,7 +81,6 @@ static void buddy_split(size_t n)
     page_a->property = n - 1;
     page_b->property = n - 1;
 
-    //???//
     SetPageProperty(page_a);
     SetPageProperty(page_b);
 
@@ -107,7 +106,7 @@ show_buddy_array(int left, int right) // 左闭右闭
 
             while ((le = list_next(le)) != &buddy_array[i])
             {
-                cprintf("No.%d free_list", i);
+                cprintf("No.%d free_list ", i);
                 struct Page *p = le2page(le, page_link);
                 cprintf("%d page ", 1 << (p->property));
                 cprintf("【address: %p】\n", p);
@@ -162,7 +161,7 @@ buddy_system_init_memmap(struct Page *base, size_t n) // base是第一个页的�
     list_add(&(buddy_array[max_order]), &(base->page_link)); // 将第一页base插入数组的最后一个链表，作为初始化的最大块的头页
     // cprintf("base->page_link:%p\n", &(base->page_link));
     base->property = max_order; // 将第一页base的property设为最大块的2幂
-    SetPageProperty(base);      // ？？？//
+    SetPageProperty(base);     
     return;
 }
 
@@ -199,12 +198,12 @@ buddy_system_alloc_pages(size_t requested_pages)
             {
                 if (!list_empty(&(buddy_array[i])))
                 {
-                    // cprintf("空闲链表数组NO.%d将被分裂\n", i);
+
                     buddy_split(i);
                     break;
                 }
             }
-            // 找了一圈啥也没找见，只能分配失败了
+
             if (i > max_order)
             {
                 break;
@@ -222,12 +221,12 @@ buddy_system_alloc_pages(size_t requested_pages)
 
 struct Page *get_buddy(struct Page *block_addr, unsigned int block_size)
 {
-    size_t real_block_size = 1 << block_size;                    // 幂次转换成数
-    size_t relative_block_addr = (size_t)block_addr - mem_begin; // 计算相对于初始化的第一个页的偏移量
+    size_t real_block_size = 1 << block_size;                    // 将块大小转换为实际页数
+    size_t relative_block_addr = (size_t)block_addr - mem_begin; // 计算块地址相对于内存开始的偏移
 
-    size_t sizeOfPage = real_block_size * sizeof(struct Page);                  // sizeof(struct Page)是0x28
+    size_t sizeOfPage = real_block_size * sizeof(struct Page);                  // 计算块所占的内存大小
     size_t buddy_relative_addr = (size_t)relative_block_addr ^ sizeOfPage;      // 异或得到伙伴块的相对地址
-    struct Page *buddy_page = (struct Page *)(buddy_relative_addr + mem_begin); // 返回伙伴块指针
+    struct Page *buddy_page = (struct Page *)(buddy_relative_addr + mem_begin); // 计算出伙伴块的绝对地址
     return buddy_page;
 }
 
@@ -236,7 +235,7 @@ buddy_system_free_pages(struct Page *base, size_t n)
 {
     assert(n > 0);
     unsigned int pnum = 1 << (base->property); // 块中页的数目
-    assert(ROUNDUP2(n) == pnum);
+    assert(ROUNDUP2(n) == pnum);// 确保释放的页数是2的幂次
     cprintf("buddy system will release from Page NO.%d total %d Pages\n", page2ppn(base), pnum);
     struct Page *left_block = base; // 放块的头页
     struct Page *buddy = NULL;
@@ -261,7 +260,7 @@ buddy_system_free_pages(struct Page *base, size_t n)
         // 删掉原来链表里的两个小块
         list_del(&(left_block->page_link));
         list_del(&(buddy->page_link));
-        left_block->property += 1; // 左快头页设置幂次加一
+        left_block->property += 1; // 左块头页设置幂次加一
         // cprintf("left_block->property=%d\n", left_block->property); //test point
         list_add(&(buddy_array[left_block->property]), &(left_block->page_link)); // 头插入相应链表
         // show_buddy_array(0, MAX_BUDDY_ORDER); // test point
