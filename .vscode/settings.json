@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "swap_fifo.h": "c",
+        "swap.h": "c",
+        "defs.h": "c",
+        "memlayout.h": "c"
+    }
+}
