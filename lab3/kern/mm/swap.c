@@ -39,8 +39,8 @@ int swap_init(void)
           panic("bad max_swap_offset %08x.\n", max_swap_offset);
      }
 
-     // sm = &swap_manager_clock; // 使用CLOCK页面置换算法
-     sm = &swap_manager_fifo; // 使用FIFO页面替换算法
+     sm = &swap_manager_clock; // 使用CLOCK页面置换算法
+     // sm = &swap_manager_fifo; // 使用FIFO页面替换算法
      int r = sm->init();
 
      if (r == 0)
@@ -137,6 +137,7 @@ int swap_in(struct mm_struct *mm, uintptr_t addr, struct Page **ptr_result)
 static inline void
 check_content_set(void)
 {
+     cprintf("into check content set\n");
      *(unsigned char *)0x1000 = 0x0a;
      assert(pgfault_num == 1);
      *(unsigned char *)0x1010 = 0x0a;
@@ -153,6 +154,7 @@ check_content_set(void)
      assert(pgfault_num == 4);
      *(unsigned char *)0x4010 = 0x0d;
      assert(pgfault_num == 4);
+     cprintf("end check content set\n");
 }
 
 static inline int
