@@ -5,7 +5,7 @@
 
 /* In the first fit algorithm, the allocator keeps a list of free blocks (known as the free list) and,
    on receiving a request for memory, scans along the list for the first block that is large enough to
-   satisfy the request. If the chosen block is significantly larger than that requested, then it is 
+   satisfy the request. If the chosen block is significantly larger than that requested, then it is
    usually split, and the remainder added to the list as another free block.
    Please see Page 196~198, Section 8.2 of Yan Wei Min's chinese book "Data Structure -- C programming language"
 */
@@ -60,33 +60,65 @@ free_area_t free_area;
 #define nr_free (free_area.nr_free)
 
 static void
-default_init(void) {
+default_init(void)
+{
     list_init(&free_list);
     nr_free = 0;
 }
 
 static void
-default_init_memmap(struct Page *base, size_t n) {
+default_init_memmap(struct Page *base, size_t n)
+// 初始化一个给定地址和大小的空闲块。
+// base: 指向第一个页面的指。n: 页数。
+{
     assert(n > 0);
+    // 遍历从 base 开始的每一个页面，
+    // 确保每一页都被预留（PageReserved(p)）。然后清除每一页的标志和属性，并设置其引用计数为0
     struct Page *p = base;
-    for (; p != base + n; p ++) {
+
+    // test point begin
+    for (; p != base + 3; p++)
+    {
+        cprintf("p的虚拟地址: 0x%016lx.\n", (uintptr_t)p);
+    }
+    // test point end
+
+    p = base; // 将 p 设置为指向这段物理页面的起始地址
+    for (; p != base + n; p++)
+    { // 从基地址 base 开始，对 n 个连续的物理页面进行初始化
         assert(PageReserved(p));
         p->flags = p->property = 0;
-        set_page_ref(p, 0);
+        set_page_ref(p, 0); // 设置引用计数(page的ref成员)为0
     }
+    // 设置基本页面的属性
+    // 空闲块中第一个页的property属性标志整个空闲块中总页数
     base->property = n;
+    // 将这个页面标记为空闲块开始的页面
+    // 将page->flag的PG_property位，也就是第1位（总共0-63有64位）设置为1
     SetPageProperty(base);
+    // 更新空闲区域的结构中的空闲块的数量
     nr_free += n;
-    if (list_empty(&free_list)) {
+
+    // 将新的空闲块添加到空闲列表中
+    // 空闲链表为空就直接添加
+    if (list_empty(&free_list))
+    {
         list_add(&free_list, &(base->page_link));
-    } else {
-        list_entry_t* le = &free_list;
-        while ((le = list_next(le)) != &free_list) {
-            struct Page* page = le2page(le, page_link);
-            if (base < page) {
+        // 这个函数将在para2节点插入在para1后面
+    }
+    else // 非空的话就遍历链表，找到合适的位置插入
+    {
+        list_entry_t *le = &free_list;
+        while ((le = list_next(le)) != &free_list)
+        {
+            struct Page *page = le2page(le, page_link);
+            if (base < page)
+            {
                 list_add_before(le, &(base->page_link));
                 break;
-            } else if (list_next(le) == &free_list) {
+            }
+            else if (list_next(le) == &free_list)
+            {
                 list_add(le, &(base->page_link));
             }
         }
@@ -94,24 +126,30 @@ default_init_memmap(struct Page *base, size_t n) {
 }
 
 static struct Page *
-default_alloc_pages(size_t n) {
+default_alloc_pages(size_t n)
+{
     assert(n > 0);
-    if (n > nr_free) {
+    if (n > nr_free)
+    {
         return NULL;
     }
     struct Page *page = NULL;
     list_entry_t *le = &free_list;
-    while ((le = list_next(le)) != &free_list) {
+    while ((le = list_next(le)) != &free_list)
+    {
         struct Page *p = le2page(le, page_link);
-        if (p->property >= n) {
+        if (p->property >= n)
+        {
             page = p;
             break;
         }
     }
-    if (page != NULL) {
-        list_entry_t* prev = list_prev(&(page->page_link));
+    if (page != NULL)
+    {
+        list_entry_t *prev = list_prev(&(page->page_link));
         list_del(&(page->page_link));
-        if (page->property > n) {
+        if (page->property > n)
+        {
             struct Page *p = page + n;
             p->property = page->property - n;
             SetPageProperty(p);
@@ -124,10 +162,12 @@ default_alloc_pages(size_t n) {
 }
 
 static void
-default_free_pages(struct Page *base, size_t n) {
+default_free_pages(struct Page *base, size_t n)
+{
     assert(n > 0);
     struct Page *p = base;
-    for (; p != base + n; p ++) {
+    for (; p != base + n; p++)
+    {
         assert(!PageReserved(p) && !PageProperty(p));
         p->flags = 0;
         set_page_ref(p, 0);
@@ -136,25 +176,34 @@ default_free_pages(struct Page *base, size_t n) {
     SetPageProperty(base);
     nr_free += n;
 
-    if (list_empty(&free_list)) {
+    if (list_empty(&free_list))
+    {
         list_add(&free_list, &(base->page_link));
-    } else {
-        list_entry_t* le = &free_list;
-        while ((le = list_next(le)) != &free_list) {
-            struct Page* page = le2page(le, page_link);
-            if (base < page) {
+    }
+    else
+    {
+        list_entry_t *le = &free_list;
+        while ((le = list_next(le)) != &free_list)
+        {
+            struct Page *page = le2page(le, page_link);
+            if (base < page)
+            {
                 list_add_before(le, &(base->page_link));
                 break;
-            } else if (list_next(le) == &free_list) {
+            }
+            else if (list_next(le) == &free_list)
+            {
                 list_add(le, &(base->page_link));
             }
         }
     }
 
-    list_entry_t* le = list_prev(&(base->page_link));
-    if (le != &free_list) {
+    list_entry_t *le = list_prev(&(base->page_link));
+    if (le != &free_list)
+    {
         p = le2page(le, page_link);
-        if (p + p->property == base) {
+        if (p + p->property == base)
+        {
             p->property += base->property;
             ClearPageProperty(base);
             list_del(&(base->page_link));
@@ -163,9 +212,11 @@ default_free_pages(struct Page *base, size_t n) {
     }
 
     le = list_next(&(base->page_link));
-    if (le != &free_list) {
+    if (le != &free_list)
+    {
         p = le2page(le, page_link);
-        if (base + base->property == p) {
+        if (base + base->property == p)
+        {
             base->property += p->property;
             ClearPageProperty(p);
             list_del(&(p->page_link));
@@ -174,12 +225,14 @@ default_free_pages(struct Page *base, size_t n) {
 }
 
 static size_t
-default_nr_free_pages(void) {
+default_nr_free_pages(void)
+{
     return nr_free;
 }
 
 static void
-basic_check(void) {
+basic_check(void)
+{
     struct Page *p0, *p1, *p2;
     p0 = p1 = p2 = NULL;
     assert((p0 = alloc_page()) != NULL);
@@ -230,15 +283,18 @@ basic_check(void) {
 }
 
 // LAB2: below code is used to check the first fit allocation algorithm
+
 // NOTICE: You SHOULD NOT CHANGE basic_check, default_check functions!
 static void
-default_check(void) {
+default_check(void)
+{
     int count = 0, total = 0;
     list_entry_t *le = &free_list;
-    while ((le = list_next(le)) != &free_list) {
+    while ((le = list_next(le)) != &free_list)
+    {
         struct Page *p = le2page(le, page_link);
         assert(PageProperty(p));
-        count ++, total += p->property;
+        count++, total += p->property;
     }
     assert(total == nr_free_pages());
 
@@ -286,9 +342,10 @@ default_check(void) {
     free_pages(p0, 5);
 
     le = &free_list;
-    while ((le = list_next(le)) != &free_list) {
+    while ((le = list_next(le)) != &free_list)
+    {
         struct Page *p = le2page(le, page_link);
-        count --, total -= p->property;
+        count--, total -= p->property;
     }
     assert(count == 0);
     assert(total == 0);
@@ -303,4 +360,3 @@ const struct pmm_manager default_pmm_manager = {
     .nr_free_pages = default_nr_free_pages,
     .check = default_check,
 };
-
