@@ -3,6 +3,8 @@
         "swap_fifo.h": "c",
         "swap.h": "c",
         "defs.h": "c",
-        "memlayout.h": "c"
+        "memlayout.h": "c",
+        "swap_lru.h": "c",
+        "swapfs.h": "c"
     }
 }

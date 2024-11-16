@@ -2,6 +2,7 @@
 #include <swapfs.h>
 #include <swap_fifo.h>
 #include <swap_clock.h>
+#include <swap_lru.h>
 #include <stdio.h>
 #include <string.h>
 #include <memlayout.h>
@@ -40,6 +41,7 @@ int swap_init(void)
      }
 
      sm = &swap_manager_clock; // 使用CLOCK页面置换算法
+     // sm = &swap_manager_lru; // 使用LRU页面置换算法
      // sm = &swap_manager_fifo; // 使用FIFO页面替换算法
      int r = sm->init();
 
