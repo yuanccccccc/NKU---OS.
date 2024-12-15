@@ -351,7 +351,10 @@ int do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf)
         goto bad_fork_cleanup_proc;
     }
     proc->parent = current;
-    setup_kstack(proc);
+    if (setup_kstack(proc) == -E_NO_MEM)
+    {
+        goto bad_fork_cleanup_kstack;
+    }
     copy_mm(clone_flags, proc);
     copy_thread(proc, stack, tf);
     int p = get_pid();
